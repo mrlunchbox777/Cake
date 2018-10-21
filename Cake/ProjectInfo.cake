@@ -39,9 +39,9 @@ public class ProjectInfo
 
 	public bool IsProduction { get; set; }
 
-	public bool WorkspaceRepository { get; set; }
+	public string WorkspaceRepository { get; set; }
 
-	public bool RepositoryUrl { get; set; }
+	public string RepositoryUrl { get; set; }
 
 	public string EnvironmentName
 	{
