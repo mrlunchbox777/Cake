@@ -2,7 +2,7 @@ public class CustomSlack
 {
 	public CustomSlack(ICakeContext context){
 		this._context = context;
-		SlackHookUri = _context.EnvironmentVariable("slackhookuri");
+		SlackHookUri = _context.EnvironmentVariable("SLACK_HOOK_URI");
 	}
 
 	private ICakeContext _context { get; set; }

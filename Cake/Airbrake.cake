@@ -2,7 +2,7 @@ public class Airbrake
 {
 	public Airbrake(ICakeContext context){
 		this.Context = context;
-		this.ProjectKey = Context.EnvironmentVariable("airbrakeProjectKey");
+		this.ProjectKey = Context.EnvironmentVariable("AIRBRAKE_PROJECT_KEY");
 	}
 
 	private ICakeContext Context { get; set; }

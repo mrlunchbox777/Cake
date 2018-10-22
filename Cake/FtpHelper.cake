@@ -20,7 +20,7 @@ public class FtpHelper
 
 	public string SecurePasswordLocation { get; set; }
 
-	public byte[] AesKey => System.Convert.FromBase64String(_context.EnvironmentVariable("FTPAesKey"));
+	public byte[] AesKey => System.Convert.FromBase64String(_context.EnvironmentVariable("FTP_AES_KEY"));
 
 	public int DeleteRetryAttempts { get; set; }
 
