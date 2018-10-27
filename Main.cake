@@ -256,10 +256,10 @@ Task("Check-Quality-Gate")
 	.WithCriteria(() => !String.IsNullOrEmpty(Config.UnitTests.SqAnalysisUrl))
 	.Does(() => 
 {
-	if (Config.Slack.PostSlackSteps)
-	{
-		Config.CakeMethods.SendSlackNotification(Config, "Starting Check Quality Gate.");
-	}
+	// if (Config.Slack.PostSlackSteps)
+	// {
+	// 	Config.CakeMethods.SendSlackNotification(Config, "Starting Check Quality Gate.");
+	// }
 	// Config.UnitTests.QualityGateReady = IsAnalysisComplete(Config.UnitTests.SqAnalysisUrl);
 	// int timeoutCount = 0;
 	// while(!Config.UnitTests.QualityGateReady) // Giving it up to two minutes to complete
