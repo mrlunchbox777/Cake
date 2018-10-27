@@ -133,6 +133,10 @@ Task("DotNet-Core-Run-Unit-Test")
 			+ (string.IsNullOrWhiteSpace(Config.UnitTests.SettingsFile) ? "" : " -s " + Config.UnitTests.SettingsFile)
 			+ (Config.UnitTests.ListTests ? " -t" : "")
 			+ (string.IsNullOrWhiteSpace(Config.Nuget.VerbosityLevel) ? "" : " -v " + Config.Nuget.VerbosityLevel)
+			+ (Config.UnitTests.ParameterArguments == null || !Config.UnitTests.ParameterArguments.Any()
+				? ""
+				: " " + Config.UnitTests.ParameterArguments.Aggregate("/p:", (x, y) => x + " /p:" + y)
+			)
 		);
 	}
 	catch (Exception)
@@ -251,6 +255,144 @@ Task("DotNet-Core-Deploy-Nuget-Package")
 			"Ensure the nuget server is up",
 			"Ensure nuget got installed",
 			"Ensure NUGET_APIKEY is an environmental variable"
+		},
+		true
+		);
+});
+
+//////////////////////////////////////////////////////////////
+// SonarQube Tasks
+//////////////////////////////////////////////////////////////
+
+Task("DotNetCore-Start-SonarQube")
+	.Does(() =>
+{
+	if (Config.Slack.PostSlackSteps)
+	{
+		Config.CakeMethods.SendSlackNotification(Config, "Starting SonarQube.");
+	}
+	// dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=../../lcov.info .\src\StandardDot.sln
+	// dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./coverage.xml .\src\StandardDot.sln
+
+
+	// dotnet test calculation.tests/calculation.tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+	
+	// dotnet build-server shutdown
+	
+	StartProcess("dotnet", " build-server shutdown");
+	// dotnet sonarscanner begin /k:"calculation" /d:sonar.host.url=http://localhost:9000 /d:sonar.cs.opencover.reportsPaths="calculation.tests\coverage.opencover.xml" /d:sonar.coverage.exclusions="**Tests*.cs"
+	using (var process = StartAndReturnProcess("dotnet",
+		" sonarscanner begin"
+		+ " /k:" + Config.UnitTests.SonarProjectKey
+		+ " /d:sonar.host.url=" + Config.UnitTests.SonarQubeHost
+		+ (!string.IsNullOrWhiteSpace(EnvironmentVariable("SONARQUBE_KEY"))
+			? " /d:sonar.login=" + EnvironmentVariable("SONARQUBE_KEY")
+			: "")
+		+ (!string.IsNullOrWhiteSpace(Config.UnitTests.ReportsPaths)
+			? " /d:sonar.cs.opencover.reportsPaths=" + Config.UnitTests.ReportsPaths
+			: ""
+		)
+		+ (!string.IsNullOrWhiteSpace(Config.UnitTests.SonarExclusions)
+			? "/d:sonar.coverage.exclusions=" + Config.UnitTests.SonarExclusions
+			: ""
+		)
+	))
+	{
+		process.WaitForExit();
+		if (process.GetExitCode() != 0) throw new CakeException("Could not start SonarQube analysis");
+	}
+	// dotnet build
+	// dotnet sonarscanner end
+	using (var process = StartAndReturnProcess(
+		"./tools/SonarQube.MSBuild.Runner/tools/MSBuild.SonarQube.Runner.exe",
+		new ProcessSettings()
+			.WithArguments(
+				arguments => {
+					arguments
+						.Append("begin")
+						.AppendSwitchQuoted(@"/k", ":", Config.ProjectInfo.ProjectName)
+						.AppendSwitchQuoted(@"/n", ":", Config.ProjectInfo.ProjectName)
+						.AppendSwitchQuoted(@"/v", ":", Config.Nuget.Version);
+					if (!string.IsNullOrEmpty(EnvironmentVariable("SONARQUBE_KEY")))
+					{
+						arguments
+							.AppendSwitchQuoted(@"/d", ":", "sonar.login=" + EnvironmentVariable("SONARQUBE_KEY"));
+					}
+					if (DirectoryExists(Config.UnitTests.UnitTestDirectoryPath))
+					{
+						arguments
+							.AppendSwitchQuoted(@"/d", ":", "sonar.cs.opencover.reportsPaths=" + Config.UnitTests.CoverageReportFilePath)
+							.AppendSwitchQuoted(@"/d", ":", "sonar.cs.xunit.reportsPaths=" + Config.UnitTests.XUnitOutputFile);
+					}
+					if (!string.IsNullOrEmpty(Config.UnitTests.JsTestPath))
+					{
+						arguments
+							.AppendSwitchQuoted("/d",":", "sonar.javascript.lcov.reportPath=jsTests.lcov");
+					}
+				}
+				)
+			)
+		)
+	{
+		process.WaitForExit();
+		if (process.GetExitCode() != 0) throw new CakeException("Could not start SonarQube analysis");
+	}
+})
+	.ReportError(exception =>
+{
+	Config.DispalyException(
+		exception,
+		new string[] {
+			"Ensure java is installed on the machine",
+			"ENSURE THE UNIT TESTS HAVE AT LEAST 1 XUNIT TEST",
+			"Check for file locks"
+		},
+		true
+		);
+});
+
+Task("End-SonarQube-MsBuild")
+	.Does(() =>
+{
+	if (Config.Slack.PostSlackSteps)
+	{
+		Config.CakeMethods.SendSlackNotification(Config, "Starting Complete SonarQube Analysis.");
+	}
+	// using (var process = StartAndReturnProcess(
+	// 		"./tools/SonarQube.MSBuild.Runner/tools/MSBuild.SonarQube.Runner.exe", 
+	// 		new ProcessSettings()
+	// 			.SetRedirectStandardOutput(true)
+	// 			.WithArguments(
+	// 				arguments => {
+	// 					arguments.Append("end");
+	// 					}
+	// 				)
+	// 			)
+	// 		)
+	// {
+	// 	Information("--------------------------------------------------------------------------------");
+	// 	Information("Starting stdout capture");
+	// 	Information("--------------------------------------------------------------------------------");
+	// 	process.WaitForExit();
+	// 	IEnumerable<string> stdout = process.GetStandardOutput();
+	// 	Information("Aggregating.....");      
+	// 	string filename = string.Format("reallyLameFileToNeed{0}.txt",Guid.NewGuid());  
+	// 	System.IO.File.WriteAllLines(filename, stdout);
+	// 	Config.UnitTests.SqAnalysisUrl = GetSonarQubeURL(System.IO.File.ReadAllLines(filename));
+	// 	DeleteFile(filename);
+	// 	Information("--------------------------------------------------------------------------------");
+	// 	Information("Check " + Config.UnitTests.SqAnalysisUrl + " for a sonarqube update status.");
+	// 	Information("--------------------------------------------------------------------------------");
+	// }
+})
+	.ReportError(exception =>
+{
+	Config.DispalyException(
+		exception,
+		new string[] {
+			"Ensure java is installed on the machine",
+			"ENSURE THE UNIT TESTS HAVE AT LEAST 1 XUNIT TEST",
+			"Check for file locks"
 		},
 		true
 		);

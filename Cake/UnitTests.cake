@@ -6,6 +6,7 @@ public class UnitTests
 		this.JsTestPath = "";
 		this.MaxQualityGateTimeoutCount = 24;
 		this.QualityGateSleepLengthPerCount = 5000;
+		this.ParameterArguments = new List<string>();
 	}
 
 	private CakeConfig _cakeConfig;
@@ -111,4 +112,16 @@ public class UnitTests
 	public bool ListTests { get; set; }
 
 	public string TargetFramework { get; set; }
+
+	public List<string> ParameterArguments { get; set; }
+
+	// SONARQUBE
+
+	public string SonarProjectKey { get; set; }
+	
+	public string SonarQubeHost { get; set; }
+
+	public string ReportsPaths { get; set; }
+
+	public string SonarExclusions { get; set; }
 }

@@ -16,13 +16,13 @@
 
 Task("Bake-Cake")
 	.IsDependentOn("Setup-Environment")
-	.IsDependentOn("StartingUpNotification")    
+	.IsDependentOn("StartingUpNotification")
 	// .IsDependentOn("Build-Unit-Tests")
 	// .IsDependentOn("Run-Unit-Tests")
 	// .IsDependentOn("Start-SonarQube")
-	// .IsDependentOn("TypeScriptCompile")   
-	// .IsDependentOn("SassCompile")   
-	.IsDependentOn("Build-Project")    
+	// .IsDependentOn("TypeScriptCompile") 
+	// .IsDependentOn("SassCompile")
+	.IsDependentOn("Build-Project")
 	// .IsDependentOn("End-SonarQube")
 	// .IsDependentOn("Check-Quality-Gate")
 	.IsDependentOn("Cleanup-Environment")
@@ -93,6 +93,13 @@ Task("Setup-Environment")
 		// Config.Nuget.BasePath = "";
 		// Config.Nuget.OutputDirectory = "";
 		Config.Nuget.IncludeReferencedProjects = true;
+
+		Config.UnitTests.ParameterArguments.Add("CollectCoverage=true");
+		Config.UnitTests.ParameterArguments.Add("CoverletOutputFormat=opencover");
+		Config.UnitTests.ParameterArguments.Add("CoverletOutput=./coverage.xml");
+		Config.UnitTests.SonarProjectKey = "StandardDot:branch";
+		Config.UnitTests.ReportsPaths = "/src/*Tests/coverage.xml";
+		Config.UnitTests.SonarExclusions = "**Tests**.cs";
 	});
 
 Task("Cleanup-Environment")

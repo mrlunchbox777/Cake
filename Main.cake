@@ -252,108 +252,6 @@ Task("Upload-Dir")
 // SonarQube Tasks
 //////////////////////////////////////////////////////////////
 
-Task("Start-SonarQube")
-	.Does(() =>
-{
-	if (Config.Slack.PostSlackSteps)
-	{
-		Config.CakeMethods.SendSlackNotification(Config, "Starting SonarQube.");
-	}
-	// using (var process = StartAndReturnProcess(
-	//     "./tools/SonarQube.MSBuild.Runner/tools/MSBuild.SonarQube.Runner.exe", 
-	//     new ProcessSettings()
-	//         .WithArguments(
-	//             arguments => {
-	//                 arguments
-	//                     .Append("begin")
-	//                     .AppendSwitchQuoted(@"/k", ":", Config.ProjectInfo.ProjectName)
-	//                     .AppendSwitchQuoted(@"/n", ":", Config.ProjectInfo.ProjectName)
-	//                     .AppendSwitchQuoted(@"/v", ":", Config.Nuget.Version);
-	//                 if (!string.IsNullOrEmpty(EnvironmentVariable("SONARQUBE_KEY")))
-	//                 {
-	//                     arguments
-	//                         .AppendSwitchQuoted(@"/d", ":", "sonar.login=" + EnvironmentVariable("SONARQUBE_KEY"));
-	//                 }
-	//                 if (DirectoryExists(Config.UnitTests.UnitTestDirectoryPath))
-	//                 {
-	//                     arguments
-	//                         .AppendSwitchQuoted(@"/d", ":", "sonar.cs.opencover.reportsPaths=" + Config.UnitTests.CoverageReportFilePath)
-	//                         .AppendSwitchQuoted(@"/d", ":", "sonar.cs.xunit.reportsPaths=" + Config.UnitTests.XUnitOutputFile);
-	//                 }
-	//                 if (!string.IsNullOrEmpty(Config.UnitTests.JsTestPath))
-	//                 {
-	//                     arguments
-	//                         .AppendSwitchQuoted("/d",":", "sonar.javascript.lcov.reportPath=jsTests.lcov");
-	//                 }
-	//             }   
-	//             )
-	//         )
-	//     )
-	// {
-	//     process.WaitForExit();
-	//     if (process.GetExitCode() != 0) throw new CakeException("Could not start SonarQube analysis");
-	// }
-})
-	.ReportError(exception =>
-{
-	Config.DispalyException(
-		exception,
-		new string[] {
-			"Ensure java is installed on the machine",
-			"ENSURE THE UNIT TESTS HAVE AT LEAST 1 XUNIT TEST",
-			"Check for file locks"
-		},
-		true
-		);
-});
-
-Task("End-SonarQube")
-	.Does(() =>
-{
-	if (Config.Slack.PostSlackSteps)
-	{
-		Config.CakeMethods.SendSlackNotification(Config, "Starting Complete SonarQube Analysis.");
-	}
-	// using (var process = StartAndReturnProcess(
-	//         "./tools/SonarQube.MSBuild.Runner/tools/MSBuild.SonarQube.Runner.exe", 
-	//         new ProcessSettings()
-	//             .SetRedirectStandardOutput(true)
-	//             .WithArguments(
-	//                 arguments => {
-	//                     arguments.Append("end");
-	//                     }
-	//                 )
-	//             )
-	//         )
-	// {
-	//     Information("--------------------------------------------------------------------------------");
-	//     Information("Starting stdout capture");
-	//     Information("--------------------------------------------------------------------------------");
-	//     process.WaitForExit();
-	//     IEnumerable<string> stdout = process.GetStandardOutput();
-	//     Information("Aggregating.....");      
-	//     string filename = string.Format("reallyLameFileToNeed{0}.txt",Guid.NewGuid());  
-	//     System.IO.File.WriteAllLines(filename, stdout);
-	//     Config.UnitTests.SqAnalysisUrl = GetSonarQubeURL(System.IO.File.ReadAllLines(filename));
-	//     DeleteFile(filename);
-	//     Information("--------------------------------------------------------------------------------");
-	//     Information("Check " + Config.UnitTests.SqAnalysisUrl + " for a sonarqube update status.");
-	//     Information("--------------------------------------------------------------------------------");
-	// }
-})
-	.ReportError(exception =>
-{
-	Config.DispalyException(
-		exception,
-		new string[] {
-			"Ensure java is installed on the machine",
-			"ENSURE THE UNIT TESTS HAVE AT LEAST 1 XUNIT TEST",
-			"Check for file locks"
-		},
-		true
-		);
-});
-
 Task("Check-Quality-Gate")
 	.WithCriteria(() => !String.IsNullOrEmpty(Config.UnitTests.SqAnalysisUrl))
 	.Does(() => 
@@ -366,15 +264,15 @@ Task("Check-Quality-Gate")
 	// int timeoutCount = 0;
 	// while(!Config.UnitTests.QualityGateReady) // Giving it up to two minutes to complete
 	// {
-	//     if (Config.UnitTests.MaxQualityGateTimeoutCount < timeoutCount) throw new CakeException("Could not get quality gate from SonarQube");
-	//     Config.UnitTests.QualityGateReady = IsAnalysisComplete(Config.UnitTests.SqAnalysisUrl);
-	//     System.Threading.Thread.Sleep(Config.UnitTests.QualityGateSleepLengthPerCount);
-	//     timeoutCount++;
+	// 	if (Config.UnitTests.MaxQualityGateTimeoutCount < timeoutCount) throw new CakeException("Could not get quality gate from SonarQube");
+	// 	Config.UnitTests.QualityGateReady = IsAnalysisComplete(Config.UnitTests.SqAnalysisUrl);
+	// 	System.Threading.Thread.Sleep(Config.UnitTests.QualityGateSleepLengthPerCount);
+	// 	timeoutCount++;
 	// }
 	// Config.UnitTests.QualityGateStatus = CheckQualityGate(Config.ProjectInfo.ProjectName);
 	// if (string.IsNullOrEmpty(Config.UnitTests.QualityGateStatus))
 	// {
-	//     Environment.Exit(1);
+	// 	Environment.Exit(1);
 	// }
 })
 	.ReportError(exception =>
