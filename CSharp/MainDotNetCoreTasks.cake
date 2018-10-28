@@ -275,24 +275,37 @@ Task("DotNetCore-Start-SonarQube")
 	StartProcess("dotnet", " build-server shutdown");
 
 	using (var process = StartAndReturnProcess("dotnet",
-		" sonarscanner begin"
-		+ " /k:" + Config.UnitTests.SonarProjectKey
-		+ " /d:sonar.host.url=" + Config.UnitTests.SonarQubeHost
-		+ (!string.IsNullOrWhiteSpace(EnvironmentVariable("SONARQUBE_KEY"))
-			? " /d:sonar.login=" + EnvironmentVariable("SONARQUBE_KEY")
-			: "")
-		+ (!string.IsNullOrWhiteSpace(Config.UnitTests.ReportsPaths)
-			? " /d:sonar.cs.opencover.reportsPaths=" + Config.UnitTests.ReportsPaths
-			: ""
-		)
-		+ (!string.IsNullOrWhiteSpace(Config.UnitTests.SonarExclusions)
-			? " /d:sonar.coverage.exclusions=" + Config.UnitTests.SonarExclusions
-			: ""
+		new ProcessSettings()
+			.SetRedirectStandardOutput(true)
+			.WithArguments(
+				arguments =>
+				{
+					arguments.Append("sonarscanner");
+					arguments.Append("begin");
+					arguments.Append("/k:" + Config.UnitTests.SonarProjectKey);
+					arguments.Append("/d:sonar.host.url=" + Config.UnitTests.SonarQubeHost);
+					if (!string.IsNullOrWhiteSpace(EnvironmentVariable("SONARQUBE_KEY"))
+					{
+						arguments.Append("/d:sonar.login=" + EnvironmentVariable("SONARQUBE_KEY"));
+					}
+					if (!string.IsNullOrWhiteSpace(Config.UnitTests.ReportsPaths))
+					{
+						arguments.Append("/d:sonar.cs.opencover.reportsPaths=" + Config.UnitTests.ReportsPaths);
+					}
+					if (!string.IsNullOrWhiteSpace(Config.UnitTests.SonarExclusions))
+					{
+						arguments.Append("/d:sonar.coverage.exclusions=" + Config.UnitTests.SonarExclusions);
+					}
+				}
+			)
 		)
 	))
 	{
 		process.WaitForExit();
-		if (process.GetExitCode() != 0) throw new CakeException("Could not start SonarQube analysis");
+		if (process.GetExitCode() != 0)
+		{
+			throw new CakeException("Could not start SonarQube analysis");
+		}
 	}
 })
 	.ReportError(exception =>
