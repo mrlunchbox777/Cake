@@ -293,10 +293,7 @@ Task("DotNetCore-Start-SonarQube")
 		StartProcess("dotnet", " tool update --global dotnet-sonarscanner");
 	} catch (Exception) {}
 
-	string processToUse = Config.UnitTests.Sudo
-		? "sudo dotnet"
-		: "dotnet";
-	using (var process = StartAndReturnProcess(processToUse,
+	using (var process = StartAndReturnProcess("dotnet",
 		new ProcessSettings()
 			.SetRedirectStandardOutput(true)
 			.WithArguments(
@@ -350,13 +347,9 @@ Task("DotNetCore-End-SonarQube")
 	{
 		Config.CakeMethods.SendSlackNotification(Config, "Starting Complete SonarQube Analysis.");
 	}
-	
-	string processToUse = Config.UnitTests.Sudo
-		? "sudo dotnet"
-		: "dotnet";
 	StartProcess("dotnet", " build-server shutdown");
 	using (var process = StartAndReturnProcess(
-			processToUse, 
+			"dotnet", 
 			new ProcessSettings()
 				.SetRedirectStandardOutput(true)
 				.WithArguments(
