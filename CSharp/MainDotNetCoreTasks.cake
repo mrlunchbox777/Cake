@@ -135,7 +135,9 @@ Task("DotNet-Core-Run-Unit-Test")
 			+ (string.IsNullOrWhiteSpace(Config.Nuget.VerbosityLevel) ? "" : " -v " + Config.Nuget.VerbosityLevel)
 			+ (Config.UnitTests.ParameterArguments == null || !Config.UnitTests.ParameterArguments.Any()
 				? ""
-				: " " + Config.UnitTests.ParameterArguments.Aggregate("/p:", (x, y) => x + " /p:" + y)
+				: Config.UnitTests.ParameterArguments
+					.Where(x => !string.IsNullOrWhiteSpace(x))
+					.Aggregate(" /p:", (x, y) => x + " /p:" + y)
 			)
 		);
 	}
