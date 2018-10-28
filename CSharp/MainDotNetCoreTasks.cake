@@ -284,7 +284,7 @@ Task("DotNetCore-Start-SonarQube")
 					arguments.Append("begin");
 					arguments.Append("/k:" + Config.UnitTests.SonarProjectKey);
 					arguments.Append("/d:sonar.host.url=" + Config.UnitTests.SonarQubeHost);
-					if (!string.IsNullOrWhiteSpace(EnvironmentVariable("SONARQUBE_KEY"))
+					if (!string.IsNullOrWhiteSpace(EnvironmentVariable("SONARQUBE_KEY")))
 					{
 						arguments.Append("/d:sonar.login=" + EnvironmentVariable("SONARQUBE_KEY"));
 					}
