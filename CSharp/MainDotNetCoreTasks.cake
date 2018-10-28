@@ -299,7 +299,7 @@ Task("DotNetCore-Start-SonarQube")
 				}
 			)
 		)
-	))
+	)
 	{
 		process.WaitForExit();
 		if (process.GetExitCode() != 0)
