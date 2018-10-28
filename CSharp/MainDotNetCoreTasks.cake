@@ -116,11 +116,11 @@ Task("DotNet-Core-Run-Unit-Test")
 
 	try
 	{
-		StartProcess("dotnet", " tool install --global coverlet.console") 
+		StartProcess("dotnet", " tool install --global coverlet.console");
 	} catch (Exception) {}
 	try
 	{
-		StartProcess("dotnet", " tool update --global coverlet.console") 
+		StartProcess("dotnet", " tool update --global coverlet.console");
 	} catch (Exception) {}
 
 	Config.MSBuildInfo.IsRunningTests = true;
@@ -286,11 +286,11 @@ Task("DotNetCore-Start-SonarQube")
 	StartProcess("dotnet", " build-server shutdown");
 	try
 	{
-		StartProcess("dotnet", " tool install --global dotnet-sonarscanner") 
+		StartProcess("dotnet", " tool install --global dotnet-sonarscanner");
 	} catch (Exception) {}
 	try
 	{
-		StartProcess("dotnet", " tool update --global dotnet-sonarscanner") 
+		StartProcess("dotnet", " tool update --global dotnet-sonarscanner");
 	} catch (Exception) {}
 
 	using (var process = StartAndReturnProcess("dotnet",
