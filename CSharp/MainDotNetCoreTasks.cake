@@ -114,6 +114,15 @@ Task("DotNet-Core-Run-Unit-Test")
 		Config.CakeMethods.SendSlackNotification(Config, "Starting Unit Tests.");
 	}
 
+	try
+	{
+		StartProcess("dotnet", " tool install --global coverlet.console") 
+	} catch (Exception) {}
+	try
+	{
+		StartProcess("dotnet", " tool update --global coverlet.console") 
+	} catch (Exception) {}
+
 	Config.MSBuildInfo.IsRunningTests = true;
 	try
 	{
@@ -137,7 +146,7 @@ Task("DotNet-Core-Run-Unit-Test")
 				? ""
 				: Config.UnitTests.ParameterArguments
 					.Where(x => !string.IsNullOrWhiteSpace(x))
-					.Aggregate(" /p:", (x, y) => x + " /p:" + y)
+					.Aggregate("", (x, y) => x + " /p:" + y)
 			)
 		);
 	}
@@ -275,6 +284,14 @@ Task("DotNetCore-Start-SonarQube")
 	}
 
 	StartProcess("dotnet", " build-server shutdown");
+	try
+	{
+		StartProcess("dotnet", " tool install --global dotnet-sonarscanner") 
+	} catch (Exception) {}
+	try
+	{
+		StartProcess("dotnet", " tool update --global dotnet-sonarscanner") 
+	} catch (Exception) {}
 
 	using (var process = StartAndReturnProcess("dotnet",
 		new ProcessSettings()
