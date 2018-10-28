@@ -124,4 +124,6 @@ public class UnitTests
 	public string ReportsPaths { get; set; }
 
 	public string SonarExclusions { get; set; }
+
+	public bool Sudo { get; set; }
 }
