@@ -11,7 +11,7 @@ joinPath()
 		print $"BASEPATH"
 		return
 	fi
-	parts=("$BASEPATH" "$SUBDIR");
+	local parts=("$BASEPATH" "$SUBDIR");
 	printf '/%s' "${parts[@]%/}"
 }
 
@@ -53,10 +53,10 @@ fi
 # Define functions
 containsElement ()
 {
-local e match="$1"
-shift
-for e; do [[ "$e" == "$match" ]] && return 0; done
-return 1
+	local e match="$1"
+	shift
+	for e; do [[ "$e" == "$match" ]] && return 0; done
+	return 1
 }
 
 ensureCakeAndNuget ()
