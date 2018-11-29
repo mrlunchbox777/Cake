@@ -3,12 +3,12 @@ joinPath()
 {
 	local BASEPATH="$1"
 	local SUBDIR="$2"
-	if [ -z $"BASEPATH" ]; then
-		print $"SUBDIR"
+	if [ -z "$BASEPATH" ]; then
+		print "$SUBDIR"
 		return
 	fi
-	if [ -z $"SUBDIR" ]; then
-		print $"BASEPATH"
+	if [ -z "$SUBDIR" ]; then
+		print "$BASEPATH"
 		return
 	fi
 	local parts=("$BASEPATH" "$SUBDIR");
@@ -177,7 +177,7 @@ startRunning()
 		exit
 	fi
 
-	if [ ! -z $"CI_COMMIT_SHA" ]; then
+	if [ ! -z "$CI_COMMIT_SHA" ]; then
 		echo "Found git commits, running commit work."
 		# Get the first parent, skip the first one because that is this commit
 		parent=$(git rev-list --first-parent "$CI_COMMIT_SHA" -n 1 --skip 1)
@@ -234,7 +234,7 @@ startRunning()
 		ADDR=()
 		IFS='/' read -ra ADDR <<< "$change"
 		if [ "${#ADDR[@]}" -lt 2 ]; then
-			continue
+			return
 		fi
 		PROJECTNAME="${ADDR[-2]}"
 		# Still need the find and run cake script in this
