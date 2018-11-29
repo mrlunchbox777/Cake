@@ -287,7 +287,7 @@ findAndRunCakeScript ()
 
 	cakeFileCount=$(ls "$NewCakeDir" | grep ".cake" -c)
 	if [ -d "$NewCakeDir" ] && [ "$cakeFileCount" -gt 0 ]; then
-		if [ -n "$CakeTarget" ] || [ "$CakeTarget" =~ "Build" ]; then
+		if [ -n "$CakeTarget" ] || [[ "$CakeTarget" =~ "Build" ]]; then
 			echo "Looking for Build.Cake in $NewCakeDir"
 
 			# we are going to need this for sonarqube
