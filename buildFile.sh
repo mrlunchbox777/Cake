@@ -11,7 +11,7 @@ joinPath()
 		print "$BASEPATH"
 		return
 	fi
-	parts=("$BASEPATH" "$SUBDIR")
+	parts=( "$BASEPATH" "$SUBDIR" )
 	printf '/%s' "${parts[@]%/}"
 }
 
