@@ -204,7 +204,7 @@ startRunning()
 	echo "number of changes - ${#diff[@]}"
 	alreadyBuilt=() # Memoize so we don't build twice
 	for change in "${diff[@]}"; do
-		echo $change
+		echo "current change - $change"
 		if [ ! -z "$change" ] && [ $(echo "$change" | grep "Tests" -c) -lt 1 ] && [ $(echo "$change" | grep ".sql" -c) -lt 1 ]; then
 			ADDR=()
 			PROJECTNAME=""
@@ -212,7 +212,8 @@ startRunning()
 			if [ "${#ADDR[@]}" -lt 2 ]; then
 				continue
 			fi
-			PROJECTNAME="${ADDR[-2]}"
+			PROJECTNAME="${ADDR[1]}"
+			echo "current project - $PROJECTNAME"
 			if [ $(containsElement "$PROJECTNAME" "$alreadyBuilt") ]; then
 				continue
 			else
@@ -236,7 +237,7 @@ startRunning()
 		if [ "${#ADDR[@]}" -lt 2 ]; then
 			return
 		fi
-		PROJECTNAME="${ADDR[-2]}"
+		PROJECTNAME="${ADDR[1]}"
 		# Still need the find and run cake script in this
 
 		exec 5>&1
