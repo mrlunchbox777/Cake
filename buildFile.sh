@@ -55,8 +55,8 @@ containsElement ()
 {
 	local e match="$1"
 	shift
-	for e; do [[ "$e" == "$match" ]] && return 0; done
-	return 1
+	for e; do [[ "$e" == "$match" ]] && return 1; done
+	return 0
 }
 
 ensureCakeAndNuget ()
@@ -214,7 +214,7 @@ startRunning()
 			fi
 			PROJECTNAME="${ADDR[1]}"
 			echo "current project - $PROJECTNAME"
-			if [ $(containsElement "$PROJECTNAME" "$alreadyBuilt") ]; then
+			if [ $(containsElement "$PROJECTNAME" "${alreadyBuilt[@]}") ]; then
 				echo "Already built $PROJECTNAME"
 				continue
 			else
