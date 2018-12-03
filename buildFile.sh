@@ -215,16 +215,18 @@ startRunning()
 			PROJECTNAME="${ADDR[1]}"
 			echo "current project - $PROJECTNAME"
 			if [ $(containsElement "$PROJECTNAME" "$alreadyBuilt") ]; then
+				echo "Already built $PROJECTNAME"
 				continue
 			else
+				echo "Now Building $PROJECTNAME"
 				alreadyBuilt+=$PROJECTNAME
-			fi
 
-			exec 5>&1
-			runResult=$(findAndRunCakeScript "$PROJECTNAME" "$CakeTarget" "$Target" "$Configuration" "$Verbosity" "$PROJECTNAME" "$PSScriptRoot"|tee >(cat - >&5))
-			echo "completed $diff"
-			# findAndRunCakeScript "$PROJECTNAME" "$CakeTarget" "$Target" "$Configuration" "$Verbosity" "$PROJECTNAME" "$PSScriptRoot"
-			# echo "completed $diff"
+				exec 5>&1
+				runResult=$(findAndRunCakeScript "$PROJECTNAME" "$CakeTarget" "$Target" "$Configuration" "$Verbosity" "$PROJECTNAME" "$PSScriptRoot"|tee >(cat - >&5))
+				echo "completed $diff"
+				# findAndRunCakeScript "$PROJECTNAME" "$CakeTarget" "$Target" "$Configuration" "$Verbosity" "$PROJECTNAME" "$PSScriptRoot"
+				# echo "completed $diff"
+			fi
 		else
 			echo "skipping $diff"
 		fi
