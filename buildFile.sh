@@ -223,7 +223,7 @@ startRunning()
 				continue
 			else
 				echo "Now Building $PROJECTNAME"
-				alreadyBuilt+=$PROJECTNAME
+				alreadyBuilt+=($PROJECTNAME)
 
 				exec 5>&1
 				runResult=$(findAndRunCakeScript "$PROJECTNAME" "$CakeTarget" "$Target" "$Configuration" "$Verbosity" "$PROJECTNAME" "$PSScriptRoot"|tee >(cat - >&5))
