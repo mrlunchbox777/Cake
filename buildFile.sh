@@ -53,9 +53,13 @@ fi
 # Define functions
 containsElement ()
 {
-	local e match="$1"
-	shift
-	for e; do [[ "$e" == "$match" ]] && return 1; done
+	myArray=$1
+	for i in "${myArray[@]}"
+	do
+		if [ "$i" == "$0" ] ; then
+			return 1
+		fi
+	done
 	return 0
 }
 
