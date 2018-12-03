@@ -51,18 +51,6 @@ fi
 ##########################################################################
 
 # Define functions
-containsElement ()
-{
-	myArray=$2
-	for i in "${myArray[@]}"
-	do
-		if [ "$i" == "$1" ] ; then
-			return 1
-		fi
-	done
-	return 0
-}
-
 ensureCakeAndNuget ()
 {
 	echo "Script dir - $SCRIPT_DIR"
