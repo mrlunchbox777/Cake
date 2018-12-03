@@ -53,10 +53,10 @@ fi
 # Define functions
 containsElement ()
 {
-	myArray=$1
+	myArray=$2
 	for i in "${myArray[@]}"
 	do
-		if [ "$i" == "$0" ] ; then
+		if [ "$i" == "$1" ] ; then
 			return 1
 		fi
 	done
