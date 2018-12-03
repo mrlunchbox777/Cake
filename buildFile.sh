@@ -218,7 +218,7 @@ startRunning()
 			fi
 			PROJECTNAME="${ADDR[1]}"
 			echo "current project - $PROJECTNAME"
-			if [ $(containsElement "$PROJECTNAME" "${alreadyBuilt[@]}") ]; then
+			if [ $(containsElement "$PROJECTNAME" $alreadyBuilt) ]; then
 				echo "Already built $PROJECTNAME"
 				continue
 			else
