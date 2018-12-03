@@ -218,7 +218,7 @@ startRunning()
 			fi
 			PROJECTNAME="${ADDR[1]}"
 			echo "current project - $PROJECTNAME"
-			if [ $(containsElement "$PROJECTNAME" $alreadyBuilt) ]; then
+			if printf '%s\n' "${alreadyBuilt[@]}" | grep -q -P '^'"${PROJECTNAME}"'$'; then
 				echo "Already built $PROJECTNAME"
 				continue
 			else
